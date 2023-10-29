@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "651716442948",
+    "project_id": "vidhunlearnify-aa623",
+    "storage_bucket": "vidhunlearnify-aa623.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:651716442948:android:acee036eba585859117511",
+        "android_client_info": {
+          "package_name": "com.example.Vidhun_LEarnify"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCDcoNnNtW4f1UVfqJ0XUxJfKVO73aywGw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
