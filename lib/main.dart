@@ -1,15 +1,40 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sizer/sizer.dart';
 import 'package:student_deshboard/routes.dart';
+import 'package:student_deshboard/screens/blocStudent/auth/auth_cubit.dart';
+import 'package:student_deshboard/screens/blocStudent/credencial/credencial_cubit.dart';
+import 'package:student_deshboard/screens/blocStudent/student_bloc_cubit.dart';
 import 'package:student_deshboard/screens/flesh_screan/flesh_screen.dart';
-
+import 'package:student_deshboard/screens/persantation/teacher/bloc/teacher_cubit.dart';
+import 'injector_config.dart' as di;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(const MyApp());
+
+  await di.init();
+  runApp( MultiBlocProvider(
+    providers: [
+      BlocProvider<TeacherCubit>(
+          create: (context) => di.sl<TeacherCubit>()),
+      BlocProvider<StudentBlocCubit>(
+          create: (context) => di.sl<StudentBlocCubit>()),
+
+      BlocProvider<AuthCubit>(
+        create: (_) => di.sl<AuthCubit>()..appStarted(),
+      ),
+      BlocProvider<CredentialCubit>(
+        create: (_) => di.sl<CredentialCubit>(),
+      ),
+    ],
+    child: const MyApp(),
+  ),
+
+  );
+
 }
 
 class MyApp extends StatelessWidget {
@@ -24,7 +49,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',
         theme: ThemeData.light().copyWith(
-          scaffoldBackgroundColor: Color(0xFF128ba3),
+          scaffoldBackgroundColor: Color(0xFF2A2D3E).withOpacity(1),
           primaryColor: Colors.green,
 
           textTheme: GoogleFonts.sourceCodeProTextTheme(

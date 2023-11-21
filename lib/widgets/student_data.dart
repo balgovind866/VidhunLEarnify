@@ -1,5 +1,8 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:image_network/image_network.dart';
 import 'package:sizer/sizer.dart';
 
 import '../constants.dart';
@@ -63,7 +66,27 @@ class StudentPicture extends StatelessWidget {
       child: CircleAvatar(
         radius: SizerUtil.deviceType == DeviceType.tablet ? 12.w : 14.w,
         backgroundColor: Colors.white,
-        backgroundImage: AssetImage(picAddress),
+       child: ImageNetwork(
+          image: picAddress ,
+          height: 150,
+          width: 150,
+          duration: 1500,
+          curve: Curves.easeIn,
+          onPointer: true,
+          debugPrint: false,
+          fullScreen: false,
+          fitAndroidIos: BoxFit.cover,
+          fitWeb: BoxFitWeb.cover,
+          borderRadius: BorderRadius.circular(70),
+          onLoading: const CircularProgressIndicator(
+            color: Colors.indigoAccent,
+          ),
+          onError: const Icon(
+            Icons.error,
+            color: Colors.red,
+          ),
+          onTap: onPress,
+        ),
       ),
     );
   }

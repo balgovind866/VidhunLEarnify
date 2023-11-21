@@ -17,15 +17,13 @@ class NamedRouter {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case RouteList.Home:
-        return getPageRoute(const HomePage());
+        return getPageRoute(const HomePage(uid: '',));
       case RouteList.LoginScrean:
         return getPageRoute(const LoginScrean());
       case RouteList.teacher:
         return getPageRoute(const TeacherScrean());
-      case RouteList.Auth:
-        return getPageRoute(const AuthCheck());
         default:
-        return MaterialPageRoute(builder: (_) => const HomePage());
+        return MaterialPageRoute(builder: (_) => const HomePage(uid: '',));
     }
   }
 }

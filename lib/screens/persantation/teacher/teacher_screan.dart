@@ -1,6 +1,13 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_network/image_network.dart';
+
+import '../../../constants.dart';
+import '../../../domain/entity/teacher_entities.dart';
+import 'bloc/teacher_cubit.dart';
+import 'bloc/teacher_state.dart';
 
 class TeacherScrean extends StatefulWidget {
   const TeacherScrean({Key? key}) : super(key: key);
@@ -14,120 +21,153 @@ class _TeacherScreanState extends State<TeacherScrean> {
   Widget build(BuildContext context) {
 
     final size = MediaQuery.of(context).size;
-    return Scaffold(body: Container(
-      width: size.width,
-      height: size.height,
-      color: Colors.grey.shade300,
+    return WillPopScope(
+      onWillPop: () async{
+        Navigator.of(context).pop();
+        return true;
+      },
 
-      child: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection('teachers').snapshots(),
-        builder: (cotext, snapshot) {
-          if (!snapshot.hasData) {
+      child: SafeArea(
+        child: Scaffold(appBar: AppBar(
+          backgroundColor: kPrimaryColor,
+          title: Text('Owr Facality'),
+          leading: IconButton(onPressed: () {
+            Navigator.of(context).pop();
 
+          }, icon: Icon(Icons.arrow_back),),
+        ),
 
-            return CircularProgressIndicator();
-          }
+          body: Container(
+          width: size.width,
+          height: size.height,
+          color: Colors.grey.shade300,
 
-          return GestureDetector(
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: BlocBuilder<TeacherCubit, TeacherState>(
+              builder: (context, state) {
+                if (state is TeacherLoaded) {
 
-
-            child: ListView.builder(
-              itemCount: snapshot.data!.docs.length,
-
-              itemBuilder: (context, index) {
-                print(snapshot.data!.docs.length.toString());
-                DocumentSnapshot routineSnapshot = snapshot.data!.docs[index];
-
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Container(
-                    height: 100,
-                    decoration: BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.white.withOpacity(0.8),
+                  return Container(
+                    width: size.width,
+                    height: size.height,
 
 
-                          offset: Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    child: GestureDetector(
-
-                        onTap: () {
-                        },
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
+                    child: GridView.builder(
+                      itemCount: state.teachers.length,
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 1,
+                        mainAxisSpacing: 16.0,
+                        crossAxisSpacing: 16.0,
+                      ),
+                      itemBuilder: (context, index) {
+                        final List<TeacherEntity> teacherData = state.teachers;
 
 
-                            Column(
+
+
+
+                        return Card(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
+                          elevation: 5,
+                          margin: EdgeInsets.all(8),
+                          child: Padding(
+                            padding: EdgeInsets.all(12),
+                            child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(routineSnapshot['teacherName'],style: TextStyle(fontWeight: FontWeight.bold,fontSize: 25),),
-                                SizedBox(height: 10,),
+                              children: <Widget>[
+                                CircleAvatar(
+                                    radius: 70,
+                                    child: ImageNetwork(
+                                      image: teacherData[index].teacherImage.toString() ,
+                                      height: 150,
+                                      width: 150,
+                                      duration: 1500,
+                                      curve: Curves.easeIn,
+                                      onPointer: true,
+                                      debugPrint: false,
+                                      fullScreen: false,
+                                      fitAndroidIos: BoxFit.cover,
+                                      fitWeb: BoxFitWeb.cover,
+                                      borderRadius: BorderRadius.circular(70),
+                                      onLoading: const CircularProgressIndicator(
+                                        color: Colors.indigoAccent,
+                                      ),
+                                      onError: const Icon(
+                                        Icons.error,
+                                        color: Colors.red,
+                                      ),
+                                      onTap: () {
+                                        debugPrint("©gabriel_patrick_souza");
+                                      },
+                                    )
+                                  /*Image.network(
+                                          teacherData[index].teacherImage.toString(),
+                                          loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                                            if (loadingProgress == null) {
+                                              return child;
+                                            } else {
+                                              return Center(
+                                                child: CircularProgressIndicator(
+                                                  value: loadingProgress.expectedTotalBytes != null
+                                                      ? loadingProgress.cumulativeBytesLoaded / (loadingProgress.expectedTotalBytes ?? 1)
+                                                      : null,
+                                                ),
+                                              );
+                                            }
+                                          },
+                                          errorBuilder: (context, error, stackTrace) {
+                                            return Text('Error loading image');
+                                          },
+                                        ),*/
+                                ),
 
+                                SizedBox(height: 12),
+                                Text(
+                                  'Teacher Name :- ${teacherData[index].teacherName}',
+                                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                ),
+                                SizedBox(height: 4),
+                                Text(
+                                  'Subject: Mathematics',
+                                  style: TextStyle(fontSize: 16),
+                                ),
+                                SizedBox(height: 4),
+                                Text(
+                                  'Experience: 5 years',
+                                  style: TextStyle(fontSize: 16),
+                                ),
+                                SizedBox(height: 4),
+                                Text(
+                                  'Qualification: M.Sc in Mathematics',
+                                  style: TextStyle(fontSize: 16),
+                                ),
                               ],
                             ),
-                            SizedBox(width: 20,),
-
-                            IconButton(
-                              icon: Icon(Icons.delete,size: 30,),
-                              onPressed: () {
-                                FirebaseFirestore.instance
-                                    .collection('daily_routines')
-                                    .doc(routineSnapshot.id)
-                                    .delete();
-                              },
-                            ),
-                          ],
-                        )
-
-                      /*ListTile(
-
-                                  shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(5.0),
-                              side: BorderSide(
-                              color: Colors.green,
-                              width: 2.0,
-                              ),
-                                  ),
-                                title: Text(routineSnapshot['name'],style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
-
-                                subtitle: Row(
-                                  children: [
-                                    Icon(Icons.access_time_filled),
-                                    SizedBox(width: 3,),
-                                    Text('$timeString-$timeStringEnd'),
-                                  ],
-                                ),
-
-                                trailing: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-
-                                    IconButton(
-                                      icon: Icon(Icons.delete),
-                                      onPressed: () {
-                                        FirebaseFirestore.instance
-                                            .collection('daily_routines')
-                                            .doc(routineSnapshot.id)
-                                            .delete();
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              ),*/
+                          ),
+                        );
+                      },
                     ),
-                  ),
-                );
+                  ) ;
+                } else if (state is TeacherLoading) {
+                  // Loading indicator while data is being fetched
+                  return CircularProgressIndicator();
+                } else if (state is TeacherFailure) {
+                  // Handle error state if necessary
+                  return Text('Failed to load teacher data');
+                } else {
+                  // Handle other states if needed
+                  return Center(
+                    child: Text('Unknown state'),
+                  );
+                }
               },
             ),
-          );
-        },
+          ),
+        ),),
       ),
-    ),);
+    );
   }
 }

@@ -1,8 +1,12 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:student_deshboard/constant/routes_constants.dart';
 
+import '../blocStudent/auth/auth_cubit.dart';
+import '../blocStudent/auth/auth_state.dart';
+import '../home_page.dart';
 import '../login_screen.dart';
 
 class FlexScreen extends StatefulWidget {
@@ -13,32 +17,68 @@ class FlexScreen extends StatefulWidget {
 }
 
 class _FlexScreenState extends State<FlexScreen> {
+
+
+  @override
+  void initState() {
+  BlocProvider.of<AuthCubit>(context).loggedIn();
+  getuid();
+    // TODO: implement initState
+    super.initState();
+  }
+void getuid(){
+
+
+}
+
   @override
   Widget build(BuildContext context) {
-Future.delayed(Duration(seconds: 5),(){
-  Navigator.of(context).pushReplacementNamed(RouteList.Auth);
-});
+
+
     return Scaffold(
-     body: Padding(
-       padding: const EdgeInsets.all(8.0),
-       child: Row(
-         children: [
+     body: BlocBuilder<AuthCubit, AuthState>(
+       builder: (context, authState) {
 
-           Column(
-             mainAxisAlignment: MainAxisAlignment.center,
-             children: [
-               Text('School',style: Theme.of(context).textTheme.bodyText1,),
-               Text('Brain',style: Theme.of(context).textTheme.bodyText1,),
+        Future.delayed(Duration(seconds: 5), () {
+          if (authState is Authenticated && authState.uid != null) {
+            // User is authenticated, navigate to the home page
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => HomePage(uid: authState.uid)),
+            );
+          } else {
+            // User is not authenticated, show the login screen
+            Navigator.of(context).pushReplacementNamed(RouteList.LoginScrean);
+          }
+        });
 
-             ],
-           ),
-           Container(
-             height: 150,
-               child: Image.asset('assert/images/splash.png')),
+           return Padding(
+             padding: const EdgeInsets.all(8.0),
+             child: Row(
+               children: [
 
-         ],
-       ),
+                 Column(
+                   mainAxisAlignment: MainAxisAlignment.center,
+                   children: [
+                     Text('School',style: Theme.of(context).textTheme.bodyText1,),
+                     Text('Brain',style: Theme.of(context).textTheme.bodyText1,),
+
+                   ],
+                 ),
+                 Container(
+                     height: 150,
+                     child: Image.asset('assert/images/splash.png')),
+
+               ],
+             ),
+           );
+
+
+         }
+
+
+
      ),
+
     );
   }
 }

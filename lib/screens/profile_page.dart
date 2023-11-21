@@ -1,16 +1,20 @@
 
 import 'package:flutter/material.dart';
+import 'package:image_network/image_network.dart';
 import 'package:sizer/sizer.dart';
 
 import '../constants.dart';
+import '../domain/entity/student_entites.dart';
 
 class MyProfileScreen extends StatelessWidget {
-  const MyProfileScreen({Key? key}) : super(key: key);
+   final List<StudentEntity> studentData;
+  const MyProfileScreen({Key? key, required this.studentData}) : super(key: key);
   static String routeName = 'MyProfileScreen';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
       //app bar theme for tablet
       appBar: AppBar(
         title: Text('My Profile'),
@@ -53,8 +57,26 @@ class MyProfileScreen extends StatelessWidget {
                     radius:
                     SizerUtil.deviceType == DeviceType.tablet ? 12.w : 13.w,
                     backgroundColor: Theme.of(context).primaryColor,
-                    backgroundImage:
-                    AssetImage('assets/images/student_profile.jpeg'),
+                    child: ImageNetwork(
+                      image: studentData[0].profileImageUrl.toString() ,
+                      height: 150,
+                      width: 150,
+                      duration: 1500,
+                      curve: Curves.easeIn,
+                      onPointer: true,
+                      debugPrint: false,
+                      fullScreen: false,
+                      fitAndroidIos: BoxFit.cover,
+                      fitWeb: BoxFitWeb.cover,
+                      borderRadius: BorderRadius.circular(70),
+                      onLoading: const CircularProgressIndicator(
+                        color: Colors.indigoAccent,
+                      ),
+                      onError: const Icon(
+                        Icons.error,
+                        color: Colors.red,
+                      ),
+                    ),
                   ),
                   kWidthSizedBox,
                   Column(
@@ -62,10 +84,10 @@ class MyProfileScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        'Aisha Mirza',
+                        '${studentData[0].fullName}',
                         style: Theme.of(context).textTheme.subtitle1,
                       ),
-                      Text('Class X-II A | Roll no: 12',
+                      Text('Branch:-${studentData[0].course} | Roll no:-${studentData[0].rollNumber}',
                           style: Theme.of(context).textTheme.subtitle2),
                     ],
                   )
@@ -84,7 +106,7 @@ class MyProfileScreen extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                ProfileDetailRow(title: 'Admission Class', value: 'X-II'),
+                ProfileDetailRow(title: 'Admission Class', value: '${studentData[0].rollNumber}'),
                 ProfileDetailRow(title: 'Admission Number', value: '000126'),
               ],
             ),
@@ -99,7 +121,7 @@ class MyProfileScreen extends StatelessWidget {
             sizebox,
             ProfileDetailColumn(
               title: 'Email',
-              value: 'aisha12@gmail.com',
+              value: '${studentData[0].email}',
             ),
             ProfileDetailColumn(
               title: 'Father Name',
